@@ -34,7 +34,7 @@ jobs:
             -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
             -o ./jopdf-linux-amd64_setup.deb
 
-          LATEST_VERSION=$(dpkg -I ./jopdf-linux-amd64_setup.deb | sed -n 's| Version: ||p')
+          LATEST_VERSION="$(dpkg -I ./jopdf-linux-amd64_setup.deb | sed -n 's| Version: ||p')"
 
           if [ -f "$OUTPUT_FILE" ]; then
             CURRENT_VERSION="$(cat "$OUTPUT_FILE")"
