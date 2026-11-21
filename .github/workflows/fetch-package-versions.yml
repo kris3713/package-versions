@@ -28,9 +28,6 @@ jobs:
         run: |
           set -x
 
-          pwd
-          ls -la
-
           curl \
             -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
             -o ./jopdf-linux-amd64_setup.deb
@@ -49,7 +46,7 @@ jobs:
           EMAIL='41898282+github-actions[bot]@users.noreply.github.com'
           git config --local user.name "$USERNAME"
           git config --local user.email "$EMAIL"
-          git add -u
+          git add -A
           # Get the list of staged files
           STAGED_FILES="$(git diff --cached --name-only)"
 
