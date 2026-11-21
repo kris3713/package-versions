@@ -53,13 +53,8 @@ jobs:
           if [ -n "$STAGED_FILES" ]; then
             commit_message=''
 
-            # Check if only flake.lock was updated
-            if [ "$STAGED_FILES" == 'flake.lock' ]; then
-              commit_message='bot: Updated `flake.lock`'
-            else
-              CURRENT_TIME="$(date +'%Y-%m-%d %H:%M:%S')"
-              commit_message="bot: Updated packages at $CURRENT_TIME UTC [skip ci]"
-            fi
+            CURRENT_TIME="$(date +'%Y-%m-%d %H:%M:%S')"
+            commit_message="bot: Fetched new package versions at $CURRENT_TIME UTC [skip ci]"
 
             git commit -m "$commit_message"
           fi
