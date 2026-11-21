@@ -23,17 +23,27 @@ jobs:
           repository: "${{ github.repository }}"
           token: "${{ env.GITHUB_TOKEN }}"
 
-      - name: 'Fetch JOPDF version'
+      - name: 'Fetch latest version of JOPDF'
         shell: bash
         run: |
           set -x
+
+          OUTPUT_FILE='./jopdf-latest-version.txt'
 
           curl \
             -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
             -o ./jopdf-linux-amd64_setup.deb
 
-          PACKAGE_VERSION=$(dpkg -I ./jopdf-linux-amd64_setup.deb | sed -n 's| Version: ||p')
-          echo "$PACKAGE_VERSION" | tee ./jopdf-latest-version.txt
+          LATEST_VERSION=$(dpkg -I ./jopdf-linux-amd64_setup.deb | sed -n 's| Version: ||p')
+
+          if [ -f "$OUTPUT_FILE" ]; then
+            CURRENT_VERSION="$(cat "$OUTPUT_FILE")"
+            if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+              echo "$LATEST_VERSION" | tee "$OUTPUT_FILE" > /dev/null
+            else
+              echo 'Both versions are the same, no changes needed.'
+            fi
+          fi
 
           rm ./jopdf-linux-amd64_setup.deb
 
