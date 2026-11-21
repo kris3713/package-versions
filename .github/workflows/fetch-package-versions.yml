@@ -28,8 +28,10 @@ jobs:
         run: |
           set -x
 
+          pwd
+
           curl \
-            -fSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
+            -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
             -o ./jopdf-linux-amd64_setup.deb
 
           PACKAGE_VERSION=$(dpkg -I ./jopdf-linux-amd64_setup.deb | sed -n 's| Version: ||p')
