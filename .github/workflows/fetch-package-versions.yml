@@ -2,13 +2,13 @@ name: 'Update packages'
 
 on:
   schedule:
-    # Runs every three hours at 01:00, 04:00, 07:00, 10:00, 13:00, 16:00, 19:00, and 22:00 UTC daily.
-    - cron: '0 1,4,7,10,13,16,19,22 * * *'
+    # Runs every 4 hours everyday at UTC time (24 hour format)
+    - cron: '0 4,8,12,16,20,24,28,32 * * *'
 
   workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
-  update-packages:
+  fetch-package-versions:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,54 +23,44 @@ jobs:
           repository: "${{ github.repository }}"
           token: "${{ env.GITHUB_TOKEN }}"
 
-      - name: 'Setup pixi'
-        uses: prefix-dev/setup-pixi@v0.11.3
-
-      - name: 'Install Nix'
-        uses: cachix/install-nix-action@v31
-
-      - name: 'Update package versions'
+      - name: 'Fetch JOPDF version'
         shell: bash
         run: |
-          BOLD_GREEN='\e[1;32m'
-          echo -e "${BOLD_GREEN}Creating a new environment with helper programs"
-          echo '> nix flake update --verbose'
-          nix flake update --verbose
-          echo '> nix develop --command bash ./scripts/update-package-versions.sh'
-          nix develop --command bash ./scripts/update-package-versions.sh
+          set -x
+
+          curl \
+            -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
+            -o ./jopdf-linux-amd64_setup.deb
+
+          dpkg -I ./jopdf-linux-amd64_setup.deb |
+            sed -n 's| Version: ||p' > ./jopdf-latest-version.txt
+
+          rm ./jopdf-linux-amd64_setup.deb
 
       - name: 'Commit changes'
         shell: bash
         run: |
-          echo "> USERNAME='github-actions[bot]'"
+          set -x
+
           USERNAME='github-actions[bot]'
-          echo "> EMAIL='41898282+github-actions[bot]@users.noreply.github.com'"
           EMAIL='41898282+github-actions[bot]@users.noreply.github.com'
-          echo '> git config --local user.name "$USERNAME"'
           git config --local user.name "$USERNAME"
-          echo '> git config --local user.email "$EMAIL"'
           git config --local user.email "$EMAIL"
-          echo '> git add -u'
           git add -u
           # Get the list of staged files
           STAGED_FILES="$(git diff --cached --name-only)"
 
           if [ -n "$STAGED_FILES" ]; then
-            echo "> commit_message=''"
             commit_message=''
 
             # Check if only flake.lock was updated
             if [ "$STAGED_FILES" == 'flake.lock' ]; then
-              echo "> commit_message='bot: Updated \`flake.lock\`'"
               commit_message='bot: Updated `flake.lock`'
             else
-              echo "> CURRENT_TIME=\"\$(date +'%Y-%m-%d %H:%M:%S')\""
               CURRENT_TIME="$(date +'%Y-%m-%d %H:%M:%S')"
-              echo '> commit_message="bot: Updated packages at $CURRENT_TIME UTC [skip ci]"'
               commit_message="bot: Updated packages at $CURRENT_TIME UTC [skip ci]"
             fi
 
-            echo '> git commit -m "$commit_message"'
             git commit -m "$commit_message"
           fi
 
