@@ -32,8 +32,8 @@ jobs:
             -fSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
             -o ./jopdf-linux-amd64_setup.deb
 
-          dpkg -I ./jopdf-linux-amd64_setup.deb |
-            sed -n 's| Version: ||p' > ./jopdf-latest-version.txt
+          PACKAGE_VERSION=$(dpkg -I ./jopdf-linux-amd64_setup.deb | sed -n 's| Version: ||p')
+          echo "$PACKAGE_VERSION" | tee ./jopdf-latest-version.txt
 
           rm ./jopdf-linux-amd64_setup.deb
 
