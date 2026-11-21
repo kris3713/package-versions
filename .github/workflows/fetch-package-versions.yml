@@ -3,7 +3,7 @@ name: 'Update packages'
 on:
   schedule:
     # Runs every 4 hours everyday at UTC time (24 hour format)
-    - cron: '0 0,4,8,12,16,20,24 * * *'
+    - cron: '0 4,8,12,16,20,24 * * *'
 
   workflow_dispatch: # Allows manual triggering of the workflow
 
