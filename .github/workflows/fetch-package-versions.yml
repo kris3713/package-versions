@@ -29,6 +29,7 @@ jobs:
           set -x
 
           pwd
+          ls -la
 
           curl \
             -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
