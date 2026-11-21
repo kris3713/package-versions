@@ -29,7 +29,7 @@ jobs:
           set -x
 
           curl \
-            -fsSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
+            -fSL https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
             -o ./jopdf-linux-amd64_setup.deb
 
           dpkg -I ./jopdf-linux-amd64_setup.deb |
