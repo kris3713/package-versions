@@ -1,4 +1,4 @@
-name: 'Update packages'
+name: 'Fetch package versions'
 
 on:
   schedule:
